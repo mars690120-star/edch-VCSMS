@@ -151,31 +151,66 @@
                 object-fit: contain;
             }
 
-            /* --- 模式 B: 趨勢圖 (強制單頁) --- */
+            /* --- 模式 B: 趨勢圖 (強制單頁修正版) --- */
+            body.print-mode-chart {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                overflow: hidden !important; /* 強制隱藏溢出，防止產生第二頁 */
+            }
+
             body.print-mode-chart .table-section { display: none !important; }
+            
             body.print-mode-chart .chart-section { 
                 display: flex !important; 
                 flex-direction: column;
-                justify-content: center; /* 垂直置中 */
-                align-items: center;     /* 水平置中 */
-                width: 100vw !important; 
-                height: 95vh !important; /* 增加高度利用率 */
+                justify-content: flex-start; /* 改為從上開始排列 */
+                align-items: center;
+                width: 100% !important; 
+                height: 98vh !important; /* 設定高度為視窗高度，保留一點點緩衝 */
                 page-break-inside: avoid;
                 page-break-after: avoid;
                 margin: 0 !important;
-                padding: 10mm !important;
+                padding: 0 !important; /* 移除 padding，由 @page margin 控制 */
+                box-sizing: border-box;
             }
+
+            /* 列印時的圖表標題 */
+            body.print-mode-chart #chartTitle {
+                font-size: 16pt !important;
+                margin-top: 0 !important;
+                margin-bottom: 2mm !important;
+                text-align: center;
+                width: 100%;
+                flex-shrink: 0;
+            }
+
+            /* 圖表容器：使用 flex-grow 自動填滿剩餘高度 */
             body.print-mode-chart #chartContainer { 
-                height: 80% !important; /* 留空間給標題和簽名 */
-                width: 100% !important;
+                flex-grow: 1; 
+                width: 98% !important; /* 稍微縮小寬度避免邊緣裁切 */
+                height: auto !important;
+                min-height: 0; /* Flexbox 巢狀滾動修復 */
+                margin-bottom: 5mm !important;
             }
+            
+            /* Canvas 強制填滿容器 */
+            body.print-mode-chart #tempChart {
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            /* 簽名區：固定在底部 */
             body.print-mode-chart .chart-footer-signatures {
                 display: flex !important;
                 width: 100%;
                 justify-content: space-around;
-                margin-top: 20mm;
-                font-size: 14pt;
+                margin-top: auto; /* 將元素推到底部 */
+                margin-bottom: 5mm; /* 底部留白 */
+                font-size: 12pt;
                 font-weight: bold;
+                flex-shrink: 0; /* 防止被壓縮 */
             }
         }
         
